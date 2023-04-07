@@ -102,3 +102,24 @@ dist
 
 # TernJS port file
 .tern-port
+
+bin/
+pkg/
+.DS_Store
+*.pyc
+*.swp
+*.tfstate
+*.tfstate*
+*~
+.vscode/
+.vs/
+.idea
+.skaffold-*.yaml
+.kubernetes-manifests-*/
+.project
+.eclipse.buildship.core.prefs
+.terraform
+.terraform/*
+.terraform.lock.hcl
+*.tfvars
+release/wi-kubernetes-manifests.yaml
