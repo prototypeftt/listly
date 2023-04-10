@@ -1,0 +1,23 @@
+syntax = "proto3"; //Specify proto3 version.
+
+package list;
+
+service ListService {
+    rpc NewList(ListName) returns (ListResponse);
+    //rpc DisplayList() returns ();
+    //rpc DeleteList() returns ();
+    //rpc AddToList() returns ();
+    //rpc DeleteFromList() returns ();
+
+  }
+
+  message ListName {
+    string listName = 0;
+  };
+
+  message ListResponse {
+    int32 listId = 0;
+  }
+
+  message Empty {}
+  
