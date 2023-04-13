@@ -13,10 +13,11 @@ service ListService {
 
   message ListName {
     string listName = 0;
+    string userId = 1;
   };
 
   message ListResponse {
-    int32 listId = 0;
+    string listId = 0;
   }
 
   message Empty {}

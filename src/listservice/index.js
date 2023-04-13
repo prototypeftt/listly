@@ -14,6 +14,16 @@ const spanner = new Spanner({
 const instance = spanner.instance(instanceId);
 const database = instance.database(databaseId);
 
+/**
+ * UUID
+ */
+
+const uuid = require('uuid');
+
+/**
+ * GRPC
+ */
+
 const PROTO_PATH = __dirname + '/protos/list.proto';
 
 const grpc = require('@grpc/grpc-js');
@@ -42,8 +52,13 @@ const list_proto = grpc.loadPackageDefinition(packageDefinition).list;
 */
 
 function NewList(call, callback) {
-  callback(null, { "listId": 1 });
+
+  //Generate UUID for listId
+  listId = uuid.v4();
+
+  callback(null, { "listId": listId });
   console.log("NewList: " + call.request.listName);
+  console.log("user: " + call.request.userId);
 
   database.runTransaction(async (err, transaction) => {
     if (err) {
@@ -55,8 +70,8 @@ function NewList(call, callback) {
         //sql: 'INSERT INTO list (listId, userId, listName) VALUES (7,666,@listName)',
         sql: 'INSERT Into list (listId, userId, listName) VALUES ($1,$2,$3)',
         params: {
-          p1: call.request.listName,
-          p2: call.request.listName,
+          p1: listId,
+          p2: call.request.userId,
           p3: call.request.listName,
         },
       });
