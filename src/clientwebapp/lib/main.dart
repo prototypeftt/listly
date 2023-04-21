@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+//import 'package:clientwebapp/common/screens/home_screen.dart';
+import 'package:clientwebapp/authentication/google_sign_in/screens/sign_in_screen.dart';
 
-void main() {
+void main() async {
   runApp(const MainApp());
 }
 
@@ -10,45 +11,15 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
-      child: MaterialApp(
-        title: 'Listly',
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-        ),
-        home: MyHomePage(),
+    return MaterialApp(
+      title: 'Listly',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        fontFamily: 'OpenSans',
       ),
-    );
-  }
-}
-
-class MyAppState extends ChangeNotifier {
-  //var current = WordPair.random();
-}
-
-class MyHomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // ← 1
-    var appState = context.watch<MyAppState>(); // ← 2
-
-    return Scaffold(
-      // ← 3
-      body: Column(
-        // ← 4
-        children: [
-          //Text('A random AWESOME idea:'), // ← 5
-          //Text(appState.current.asLowerCase), // ← 6
-          ElevatedButton(
-            onPressed: () {
-              print('button pressed!');
-            },
-            child: Text('Next'),
-          ),
-        ], // ← 7
-      ),
+      home: const SignInScreen(),
+      //home: const HomeScreen(),
     );
   }
 }
