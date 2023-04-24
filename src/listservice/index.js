@@ -75,11 +75,11 @@ function NewList(call, callback) {
           p3: call.request.listName,
         },
       });
-  
+
       console.log(
         `Successfully inserted ${rowCount} record into the list table.`
       );
-  
+
       await transaction.commit();
     } catch (err) {
       console.error('ERROR:', err);
@@ -89,16 +89,53 @@ function NewList(call, callback) {
     }
   });
 
+}
+
+function GetLists(call, callback) {
+
+  console.log("request:" + call.request.userId);
+
+  database.runTransaction(async (err, transaction) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    try {
+      console.log("running get lists query for user:" + call.request.userId);
+
+      const [result] = await transaction.run({
+        sql: 'SELECT listId,listName FROM list WHERE (userId=$1)',
+        params: {
+          p1: call.request.userId,
+        },
+      });
+
+      console.log(
+        `${result.length} records returned`
+      );
+        
+      const jsonString = JSON.parse(JSON.stringify(result));
+         
+      callback(null, { "list" : jsonString});
+
+    } catch (err) {
+      console.error('ERROR:', err);
+    } finally {
+      // Close the database when finished.
+      //database.close();
+    }
+  });
 
 }
 
-
 function main() {
-
 
   const server = new grpc.Server();
 
-  server.addService(list_proto.ListService.service, { NewList: NewList });
+  server.addService(list_proto.ListService.service, { 
+    NewList: NewList, 
+    GetLists: GetLists 
+  });
 
   console.log("Server listinening on port : 50051")
 
@@ -111,8 +148,6 @@ function main() {
       server.start();
     }
   );
-
-
 
 }
 

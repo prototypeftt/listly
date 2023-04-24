@@ -5,6 +5,7 @@ import 'package:clientwebapp/authentication/google_sign_in/utils/authentication.
 import 'package:clientwebapp/common/widgets/app_bar_title.dart';
 
 import 'package:clientwebapp/authentication/google_sign_in/screens/sign_in_screen.dart';
+import 'package:clientwebapp/common/screens/list_screen.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -47,6 +48,26 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Route _routeToListScreen() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          ListScreen(user: _user),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = const Offset(-1.0, 0.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     _user = widget._user;
@@ -55,6 +76,15 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   void _onItemTapped(int index) {
+    switch (index) {
+      case 0:
+        // only scroll to top when current index is selected.
+        break;
+      case 1:
+        Navigator.of(context).pushReplacement(_routeToListScreen());
+        break;
+    }
+
     setState(() {
       _selectedIndex = index;
     });

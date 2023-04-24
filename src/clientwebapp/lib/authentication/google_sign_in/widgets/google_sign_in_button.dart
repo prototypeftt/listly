@@ -4,6 +4,7 @@ import 'package:clientwebapp/res/fire_assets.dart';
 import 'package:clientwebapp/authentication/google_sign_in/utils/authentication.dart';
 
 import '../screens/user_info_screen.dart';
+import 'package:clientwebapp/common/screens/home_screen.dart';
 
 class GoogleSignInButton extends StatefulWidget {
   const GoogleSignInButton({Key? key}) : super(key: key);
@@ -46,7 +47,7 @@ class GoogleSignInButtonState extends State<GoogleSignInButton> {
                 if (user != null) {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                      builder: (context) => UserInfoScreen(
+                      builder: (context) => HomeScreen(
                         user: user,
                       ),
                     ),
