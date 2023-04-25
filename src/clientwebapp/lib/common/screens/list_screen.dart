@@ -23,14 +23,11 @@ class Lists {
   final String listid;
   final String listname;
 
-  const Lists({required this.listid, required this.listname});
+  Lists(this.listid, this.listname);
 
-  factory Lists.fromJson(Map<String, dynamic> json) {
-    return Lists(
-      listid: json['listid'] as String,
-      listname: json['listname'] as String,
-    );
-  }
+  Lists.fromJson(Map<String, dynamic> json)
+      : listid = json['listid'],
+        listname = json['listname'];
 }
 
 class ListScreenState extends State<ListScreen> {
@@ -39,7 +36,7 @@ class ListScreenState extends State<ListScreen> {
   final newListTextController = TextEditingController(text: "List Name...");
   List listOfItems = List.generate(20, (index) => 'Sample List - $index');
   //late List listOfItems;
-  late List<Lists> listOfLists;
+  List<Lists> listOfLists = [];
 
   Route _routeToSignInScreen() {
     return PageRouteBuilder(
@@ -85,10 +82,7 @@ class ListScreenState extends State<ListScreen> {
   @override
   void initState() {
     _user = widget._user;
-//    getLists(_user.uid) as List<Lists>;
-    //late Future<List<Lists>> result = getLists(_user.uid);
-    //print("result of get data is ${result}");
-
+    getLists(_user.uid);
     super.initState();
   }
 
@@ -201,13 +195,10 @@ class ListScreenState extends State<ListScreen> {
   }
 
   List<Lists> parseLists(String responseBody) {
-    //print("@@@@@@ Parsing JSON function: $responseBody");
+    List mapData = jsonDecode(responseBody)['list'];
 
-    final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
-
-    print("++++++ Parsed JSON: $parsed");
-
-    return parsed.map<Lists>((json) => Lists.fromJson(json)).toList();
+    List<Lists> lists = mapData.map((list) => Lists.fromJson(list)).toList();
+    return lists;
   }
 
   Future<List<Lists>> getLists(String userId) async {
@@ -223,8 +214,9 @@ class ListScreenState extends State<ListScreen> {
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
-      print("@@@@@ result: }" + response.body);
-      return parseLists(response.body);
+      List<Lists> lists = parseLists(response.body);
+      print("@@@@@ lists: " + lists.length.toString());
+      return lists;
     } else {
       throw Exception('Failed to get list.');
     }
