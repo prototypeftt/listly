@@ -1,3 +1,7 @@
+const config =  require('./config.js');
+
+console.log(`NODE_ENV=${config.NODE_ENV}`);
+
 // Imports the Google Cloud client library
 const { Spanner } = require('@google-cloud/spanner');
 
@@ -44,7 +48,7 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 
 const list_proto = grpc.loadPackageDefinition(packageDefinition).list;
 
-const PORT = process.env.PORT || 8080;
+//const PORT = process.env.PORT;
 
 /**
 
@@ -138,10 +142,10 @@ function main() {
     GetLists: GetLists 
   });
 
-  console.log("Server listinening on port :" + PORT);
+  console.log("Server listening on port :" + config.PORT);
 
   server.bindAsync(
-    `[::]:${PORT}`,
+    `[::]:${config.PORT}`,
 
     grpc.ServerCredentials.createInsecure(),
 
@@ -153,7 +157,3 @@ function main() {
 }
 
 main();
-
-
-
-//    '0.0.0.0:50051',
