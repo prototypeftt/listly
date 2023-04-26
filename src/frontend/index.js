@@ -1,3 +1,7 @@
+const config =  require('./config.js');
+
+console.log(`NODE_ENV=${config.NODE_ENV}`);
+
 const express = require("express");
 const bodyParser = require('body-parser');
 var http = require("http");
@@ -32,7 +36,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 // Port Number Setup
-var PORT = process.env.port || 5000;
+//var PORT = process.env.port || 5000;
 
 endpoints = {
   listService: "http://localhost:50051",
@@ -77,7 +81,7 @@ app.get('/getlists', (req, res) => {
 
 })
 
-app.listen(PORT, function (error) {
+app.listen(config.PORT, function (error) {
   if (error) throw error;
-  console.log("Server created Successfully on PORT :", PORT);
+  console.log("Server created Successfully on PORT :", config.PORT);
 });
