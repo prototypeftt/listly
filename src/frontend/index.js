@@ -6,7 +6,7 @@ const express = require("express");
 const bodyParser = require('body-parser');
 var http = require("http");
 
-const PROTO_PATH = __dirname + '../../listservice/protos/list.proto';
+const PROTO_PATH = __dirname + '/protos/list.proto';
 
 const grpc = require('@grpc/grpc-js');
 
@@ -42,7 +42,7 @@ endpoints = {
   listService: "http://localhost:50051",
 };
 
-app.use(express.static("public"));
+//app.use(express.static("public"));
 
 app.post('/newlist', (req, res) => {
   console.log("New List Request " + JSON.stringify(req.body));
