@@ -53,7 +53,7 @@ on:
 env:
   PROJECT_ID: listly-f1ab7 # TODO: update Google Cloud project id
   SERVICE: listservice # TODO: update Cloud Run service name
-  REGION: YOUR_SERVICE_REGION # TODO: update Cloud Run service region
+  REGION: global # TODO: update Cloud Run service region
 
 jobs:
   deploy:
