@@ -44,6 +44,7 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 
 const list_proto = grpc.loadPackageDefinition(packageDefinition).list;
 
+const PORT = process.env.PORT || 8080;
 
 /**
 
@@ -137,10 +138,10 @@ function main() {
     GetLists: GetLists 
   });
 
-  console.log("Server listinening on port : 50051")
+  console.log("Server listinening on port :" + PORT);
 
   server.bindAsync(
-    '0.0.0.0:50051',
+    `[::]:${PORT}`,
 
     grpc.ServerCredentials.createInsecure(),
 
@@ -152,3 +153,7 @@ function main() {
 }
 
 main();
+
+
+
+//    '0.0.0.0:50051',
