@@ -257,10 +257,12 @@ function main() {
     GetLists: GetLists
   });
 
+  console.log("Server listening on address :" );
   console.log("Server listening on port :" + config.PORT);
 
   server.bindAsync(
-    `[::]:${config.PORT}`,
+    //`[::]:${config.PORT}`,
+    `0.0.0.0:${config.PORT}`,
 
     grpc.ServerCredentials.createInsecure(),
 
