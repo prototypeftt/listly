@@ -257,7 +257,7 @@ function main() {
     GetLists: GetLists
   });
 
-  console.log("Server listening on address :" );
+  console.log("Server listening on address :" + process.env.PORT);
   console.log("Server listening on port :" + config.PORT);
 
   server.bindAsync(
