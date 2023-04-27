@@ -1,4 +1,4 @@
-const config =  require('./config.js');
+const config = require('./config.js');
 
 console.log(`NODE_ENV=${config.NODE_ENV}`);
 
@@ -17,6 +17,19 @@ const spanner = new Spanner({
 // Gets a reference to a Cloud Spanner instance and database
 const instance = spanner.instance(instanceId);
 const database = instance.database(databaseId);
+
+// Imports the Google Cloud client library
+const {
+  RegistrationServiceClient,LookupServiceClient,
+} = require('@google-cloud/service-directory').v1;
+
+// Creates a client
+const registrationServiceClient = new RegistrationServiceClient();
+
+const namespaceId = 'list';
+const serviceId = 'listservice';
+const locationId = 'europe-west3';
+const endpointId = 'listservice1';
 
 /**
  * UUID
@@ -47,6 +60,100 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 });
 
 const list_proto = grpc.loadPackageDefinition(packageDefinition).list;
+
+function RegisterService() {
+
+  
+  // Build the namespace name
+  const namespaceName = registrationServiceClient.namespacePath(
+    projectId,
+    locationId,
+    namespaceId
+  );
+
+  async function createService() {
+    try {
+      const [service] = await registrationServiceClient.createService({
+        parent: namespaceName,
+        serviceId: serviceId,
+      });
+      console.log(`Created service: ${service.name}`);
+      return service;
+    } catch (err) {
+      console.log('error creating service' + err);
+      return err;
+    }
+
+  }
+
+  try {
+    return createService();
+  } catch (err) {
+    console.log("error creating service");
+  }
+}
+
+function ConfigureEndPoint() {
+  
+
+  // Build the service name
+  const serviceName = registrationServiceClient.servicePath(
+    projectId,
+    locationId,
+    namespaceId,
+    serviceId
+  );
+
+
+    async function createEndpoint() {
+      const [endpoint] = await registrationServiceClient.createEndpoint({
+        parent: serviceName,
+        endpointId: endpointId,
+        //endpoint: {address: '10.0.0.1', port: 8080},
+        annotation: {serviceurl : 'https://listservice-3pziucpdaa-ey.a.run.app'}
+      });
+
+      console.log(`Created endpoint: ${endpoint.name}`);
+      return endpoint;
+    }
+
+    try {
+    return createEndpoint();
+  } catch (err) {
+    console.log("error creating service");
+  }
+
+}
+
+function GetServiceList(){
+// Creates a client
+const lookupServiceClient = new LookupServiceClient();
+
+  // Build the service name
+  const serviceName = registrationServiceClient.servicePath(
+    projectId,
+    locationId,
+    namespaceId,
+    serviceId
+  );
+
+  async function resolveService() {
+    const [response] = await lookupServiceClient.resolveService({
+      name: serviceName,
+    });
+  
+    console.log(`Resolved service: ${response.service.name}`);
+    for (const e of response.service.endpoints) {
+      console.log(`\n${e.name}`);
+      console.log(`Address: ${e.address}`);
+      console.log(`Port: ${e.port}\n`);
+    }
+    return response.service;
+  }
+  
+  return resolveService();
+
+}
 
 //const PORT = process.env.PORT;
 
@@ -118,10 +225,10 @@ function GetLists(call, callback) {
       console.log(
         `${result.length} records returned`
       );
-        
+
       const jsonString = JSON.parse(JSON.stringify(result));
-         
-      callback(null, { "list" : jsonString});
+
+      callback(null, { "list": jsonString });
 
     } catch (err) {
       console.error('ERROR:', err);
@@ -135,11 +242,17 @@ function GetLists(call, callback) {
 
 function main() {
 
+  //RegisterService();
+  
+  ConfigureEndPoint();
+
+  GetServiceList();
+
   const server = new grpc.Server();
 
-  server.addService(list_proto.ListService.service, { 
-    NewList: NewList, 
-    GetLists: GetLists 
+  server.addService(list_proto.ListService.service, {
+    NewList: NewList,
+    GetLists: GetLists
   });
 
   console.log("Server listening on port :" + config.PORT);
