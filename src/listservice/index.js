@@ -244,9 +244,9 @@ function main() {
 
   //RegisterService();
   
-  ConfigureEndPoint();
+  //ConfigureEndPoint();
 
-  GetServiceList();
+  //GetServiceList();
 
   const server = new grpc.Server();
 
