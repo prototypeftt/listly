@@ -8,6 +8,8 @@ var http = require("http");
 
 const PROTO_PATH = __dirname + '/protos/list.proto';
 
+console.log('proto path:' + PROTO_PATH);
+
 const grpc = require('@grpc/grpc-js');
 
 const protoLoader = require('@grpc/proto-loader');
@@ -27,7 +29,8 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 const list_proto = grpc.loadPackageDefinition(packageDefinition).list;
 
 
-service_address = config.SERVICE_ADDRESS+':'+config.SERVICE_ADDRESS_PORT;
+//service_address = config.SERVICE_ADDRESS+':'+config.SERVICE_ADDRESS_PORT;
+service_address = config.SERVICE_ADDRESS;
 
 console.log('service address: '+service_address)
 
