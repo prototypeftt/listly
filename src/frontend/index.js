@@ -27,7 +27,9 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 const list_proto = grpc.loadPackageDefinition(packageDefinition).list;
 
 
-service_address = 'https://listservice-3pziucpdaa-ey.a.run.app:'+config.PORT;
+service_address = config.SERVICE_ADDRESS+':'+config.SERVICE_ADDRESS_PORT;
+
+console.log('service address: '+service_address)
 
 const listStub = new list_proto.ListService(service_address,
   grpc.credentials.createInsecure());

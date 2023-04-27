@@ -13,5 +13,7 @@ console.log("config" + path.resolve(__dirname, `${process.env.NODE_ENV}.env`));
 module.exports = {
     NODE_ENV : process.env.NODE_ENV || 'development',
     HOST : process.env.HOST || 'localhost',
-    PORT : process.env.PORT || 5000
+    PORT : process.env.PORT || 5000,
+    SERVICE_ADDRESS : process.env.SERVICE_ADDRESS || '0.0.0.0',
+    SERVICE_ADDRESS_PORT : process.env.SERVICE_ADDRESS_PORT || 50051
 }
