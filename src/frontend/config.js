@@ -15,5 +15,5 @@ module.exports = {
     HOST : process.env.HOST || 'localhost',
     PORT : process.env.PORT || 5000,
     SERVICE_ADDRESS : process.env.SERVICE_ADDRESS || '0.0.0.0',
-    SERVICE_ADDRESS_PORT : process.env.SERVICE_ADDRESS_PORT || 50051
+    SERVICE_ADDRESS_PORT : process.env.SERVICE_ADDRESS_PORT || 443
 }
