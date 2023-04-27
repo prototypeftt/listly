@@ -29,8 +29,8 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 const list_proto = grpc.loadPackageDefinition(packageDefinition).list;
 
 
-//service_address = config.SERVICE_ADDRESS+':'+config.SERVICE_ADDRESS_PORT;
-service_address = config.SERVICE_ADDRESS;
+service_address = config.SERVICE_ADDRESS+':'+config.SERVICE_ADDRESS_PORT;
+//service_address = config.SERVICE_ADDRESS;
 
 console.log('service address: '+service_address)
 
