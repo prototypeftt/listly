@@ -43,6 +43,8 @@ const uuid = require('uuid');
 
 const PROTO_PATH = __dirname + '/protos/list.proto';
 
+console.log('proto path:' + PROTO_PATH);
+
 const grpc = require('@grpc/grpc-js');
 
 const protoLoader = require('@grpc/proto-loader');
