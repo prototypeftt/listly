@@ -202,7 +202,8 @@ class ListScreenState extends State<ListScreen> {
   }
 
   Future<List<Lists>> getLists(String userId) async {
-    String url = "localhost:5000";
+    //String url = "localhost:5000";
+    String url = "https://frontend-3pziucpdaa-ey.a.run.app";
 
     final params = {
       'userId': userId,
