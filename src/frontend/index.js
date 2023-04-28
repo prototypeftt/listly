@@ -37,7 +37,7 @@ console.log('service address: '+service_address)
 /*const listStub = new list_proto.ListService(service_address,
   grpc.credentials.createInsecure());*/
 
-const listStub = new list_proto.ListService('https://listservice-3pziucpdaa-ey.a.run.app:443',
+const listStub = new list_proto.ListService('listservice-3pziucpdaa-ey.a.run.app:443',
   grpc.credentials.createInsecure());
 
 const app = express();
