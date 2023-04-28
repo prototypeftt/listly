@@ -51,11 +51,23 @@ app.post('/newlist', (req, res) => {
   console.log("New List Request " + JSON.stringify(req.body));
   let data = req.body;
   listStub.NewList(data, (err, ListResponse) => {
-    console.log("new List Added");
+    console.log("new list call made");
+    if (!err) {
+      
+      //responseData = ListList;
+      console.log('newlist: ', data);
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Methods", "GET,PUT,PATCH,POST,DELETE");
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      //res.send(JSON.stringify(responseData.list));
+      res.send('Data Received: ' + JSON.stringify(data));    
+    } else {
+      console.error(err);
+    }
   }
   );
 
-  res.send('Data Received: ' + JSON.stringify(data));
+  //res.send('Data Received: ' + JSON.stringify(data));
 })
 
 app.get('/getlists', (req, res) => { 

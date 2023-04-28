@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:clientwebapp/res/custom_colors.dart';
 import 'package:clientwebapp/authentication/google_sign_in/utils/authentication.dart';
 import 'package:clientwebapp/common/widgets/app_bar_title.dart';
-
+import 'package:flutter/foundation.dart';
 import 'package:clientwebapp/authentication/google_sign_in/screens/sign_in_screen.dart';
 import 'package:clientwebapp/common/screens/list_screen.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -261,8 +261,15 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Future<http.Response> createNewList(String listName, String userId) async {
+    String url = dotenv.env['FRONTEND_URL'].toString();
+    var uri = Uri.http(url, '/newlist');
+
+    if (kReleaseMode) {
+      uri = Uri.https(url, '/newlist');
+    }
+
     final response = await http.post(
-      Uri.parse('http://localhost:5000/newlist'),
+      uri,
       headers: <String, String>{
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       },

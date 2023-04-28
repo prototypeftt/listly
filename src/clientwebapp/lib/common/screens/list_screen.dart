@@ -1,10 +1,11 @@
 import 'package:clientwebapp/common/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:clientwebapp/res/custom_colors.dart';
-import 'package:clientwebapp/authentication/google_sign_in/utils/authentication.dart';
 import 'package:clientwebapp/common/widgets/app_bar_title.dart';
 import 'package:clientwebapp/authentication/google_sign_in/screens/sign_in_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -202,15 +203,19 @@ class ListScreenState extends State<ListScreen> {
   }
 
   Future<List<Lists>> getLists(String userId) async {
-    //String url = "localhost:5000";
-    String url = "frontend-3pziucpdaa-ey.a.run.app:8080";
+    String url = dotenv.env['FRONTEND_URL'].toString();
 
     final params = {
       'userId': userId,
     };
 
-    final uri = Uri.https(url, '/getlists', params);
-    //print('URI getlists : $uri'); // Print to console
+    var uri = Uri.http(url, '/getlists', params);
+
+    if (kReleaseMode) {
+      uri = Uri.https(url, '/getlists', params);
+    }
+
+    print('URI getlists : $uri'); // Print to console
 
     final response = await http.get(uri);
 
