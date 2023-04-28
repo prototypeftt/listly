@@ -203,13 +203,13 @@ class ListScreenState extends State<ListScreen> {
 
   Future<List<Lists>> getLists(String userId) async {
     //String url = "localhost:5000";
-    String url = "https://frontend-3pziucpdaa-ey.a.run.app";
+    String url = "frontend-3pziucpdaa-ey.a.run.app:8080";
 
     final params = {
       'userId': userId,
     };
 
-    final uri = Uri.http(url, '/getlists', params);
+    final uri = Uri.https(url, '/getlists', params);
     //print('URI getlists : $uri'); // Print to console
 
     final response = await http.get(uri);

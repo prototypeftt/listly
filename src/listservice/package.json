@@ -1,7 +1,8 @@
 {
   "name": "listservice",
   "version": "1.0.0",
-  "description": "",
+  "private": true,
+  "description": "shopping list service",
   "main": "index.js",
   "scripts": {
     "start": "export NODE_ENV=production&& node index.js",
@@ -24,5 +25,8 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
+  },
+  "engines": {
+    "node": ">=12.0.0"
   }
 }
