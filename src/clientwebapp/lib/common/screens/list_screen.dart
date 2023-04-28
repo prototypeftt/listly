@@ -83,7 +83,7 @@ class ListScreenState extends State<ListScreen> {
   @override
   void initState() {
     _user = widget._user;
-    getLists(_user.uid);
+    //getLists(_user.uid);
     super.initState();
   }
 
