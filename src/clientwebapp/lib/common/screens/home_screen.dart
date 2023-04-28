@@ -262,10 +262,15 @@ class HomeScreenState extends State<HomeScreen> {
 
   Future<http.Response> createNewList(String listName, String userId) async {
     String url = dotenv.env['FRONTEND_URL'].toString();
-    var uri = Uri.http(url, '/newlist');
+
+    Uri uri;
 
     if (kReleaseMode) {
+      print('mode${dotenv.env['FRONTEND_URL']}');
       uri = Uri.https(url, '/newlist');
+    } else {
+      print('mode${dotenv.env['FRONTEND_URL']}');
+      uri = Uri.http(url, '/newlist');
     }
 
     final response = await http.post(

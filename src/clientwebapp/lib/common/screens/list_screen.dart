@@ -209,10 +209,14 @@ class ListScreenState extends State<ListScreen> {
       'userId': userId,
     };
 
-    var uri = Uri.http(url, '/getlists', params);
+    Uri uri;
 
     if (kReleaseMode) {
+      print('mode${dotenv.env['FRONTEND_URL']}');
       uri = Uri.https(url, '/getlists', params);
+    } else {
+      print('mode${dotenv.env['FRONTEND_URL']}');
+      uri = Uri.http(url, '/getlists', params);
     }
 
     print('URI getlists : $uri'); // Print to console
