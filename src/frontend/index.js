@@ -42,8 +42,10 @@ const listStub = new list_proto.ListService(service_address,
 
 const app = express();
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(express.static('public'));
 
 app.post('/newlist', (req, res) => {
   console.log("New List Request " + JSON.stringify(req.body));
