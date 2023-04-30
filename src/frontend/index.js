@@ -28,6 +28,8 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 
 const list_proto = grpc.loadPackageDefinition(packageDefinition).list;
 
+credentials = grpc.credentials.createSsl();
+
 
 service_address = config.SERVICE_ADDRESS+':'+config.SERVICE_ADDRESS_PORT;
 //service_address = config.SERVICE_ADDRESS;
@@ -35,7 +37,10 @@ service_address = config.SERVICE_ADDRESS+':'+config.SERVICE_ADDRESS_PORT;
 console.log('service address: '+service_address)
 
 const listStub = new list_proto.ListService(service_address,
-  grpc.credentials.createInsecure());
+  credentials);
+
+/*const listStub = new list_proto.ListService(service_address,
+  grpc.credentials.createInsecure());*/
 
 /*const listStub = new list_proto.ListService('listservice-3pziucpdaa-ey.a.run.app:443',
   grpc.credentials.createInsecure());*/
