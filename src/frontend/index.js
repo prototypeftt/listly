@@ -47,6 +47,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static('public'));
 
+
 app.post('/newlist', (req, res) => {
   console.log("New List Request " + JSON.stringify(req.body));
   let data = req.body;
