@@ -64,7 +64,7 @@ app.post('/newlist', (req, res) => {
       res.header("Access-Control-Allow-Methods", "GET,PUT,PATCH,POST,DELETE");
       res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
       //res.send(JSON.stringify(responseData.list));
-      res.send('Data Received: ' + JSON.stringify(data));
+      res.send(JSON.stringify(ListResponse));
     } else {
       console.error(err);
     }
@@ -91,7 +91,7 @@ app.get('/deletelist', (req,res) => {
       res.header("Access-Control-Allow-Methods", "GET,PUT,PATCH,POST,DELETE");
       res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
       //res.send(JSON.stringify(responseData.list));
-      res.send('Data Received: ' + JSON.stringify(DeleteResponse));
+      res.send(JSON.stringify(DeleteResponse));
     } else {
       console.error(err);
     }

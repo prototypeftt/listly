@@ -25,8 +25,10 @@ class HomeScreenState extends State<HomeScreen> {
   late User _user;
   bool _isSigningOut = false;
   int _selectedIndex = 0;
-  final newListTextController = TextEditingController(text: "List Name...");
+  final newListTextController = TextEditingController();
   bool _isShow = false;
+  bool _listNameEntered = false;
+  bool _newListCreatedShow = false;
 
   Route _routeToSignInScreen() {
     return PageRouteBuilder(
@@ -70,12 +72,19 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    _user = widget._user;
-
     super.initState();
+    _user = widget._user;
+    //newListTextController.addListener((_updateNewListEntry));
   }
 
-  void _onItemTapped(int index) {
+  void _updateNewListEntry() {
+    print('change detected');
+    setState(() {
+      _listNameEntered = true;
+    });
+  }
+
+  void _onItemTapped(int index) async {
     switch (index) {
       case 0:
         // only scroll to top when current index is selected.
@@ -83,6 +92,17 @@ class HomeScreenState extends State<HomeScreen> {
       case 1:
         Navigator.of(context).pushReplacement(_routeToListScreen());
         break;
+      case 2:
+        print('signing out');
+        setState(() {
+          _isSigningOut = true;
+        });
+        await Authentication.signOut(context: context);
+        setState(() {
+          _isSigningOut = false;
+        });
+        if (!mounted) return;
+        Navigator.of(context).pushReplacement(_routeToSignInScreen());
     }
 
     setState(() {
@@ -102,6 +122,7 @@ class HomeScreenState extends State<HomeScreen> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        mouseCursor: SystemMouseCursors.grab,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -113,11 +134,12 @@ class HomeScreenState extends State<HomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.school),
-            label: 'Info',
-          ),
+            label: 'Sign Out',
+          )
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
+        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
         onTap: _onItemTapped,
       ),
       body: SafeArea(
@@ -131,6 +153,16 @@ class HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(),
+              Visibility(
+                visible: _newListCreatedShow,
+                child: const Text(
+                  'New List Created',
+                  style: TextStyle(
+                    color: Palette.firebaseYellow,
+                    fontSize: 26,
+                  ),
+                ),
+              ),
               const SizedBox(height: 16.0),
               Visibility(
                   visible: !_isShow,
@@ -138,8 +170,9 @@ class HomeScreenState extends State<HomeScreen> {
                       onPressed: () {
                         setState(() {
                           //displayText = newListTextController.text;
-
+                          _newListCreatedShow = false;
                           _isShow = true;
+                          newListTextController.text = '';
                         });
                       },
                       child: const Text('Create New List...'))),
@@ -148,9 +181,10 @@ class HomeScreenState extends State<HomeScreen> {
                   child: TextField(
                     controller: newListTextController,
                     obscureText: false,
+                    autofocus: true,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'List name ...',
+                      labelText: 'List name',
                     ),
                   )),
               const SizedBox(
@@ -161,11 +195,7 @@ class HomeScreenState extends State<HomeScreen> {
                   visible: _isShow,
                   child: ElevatedButton(
                       onPressed: () {
-                        setState(() {
-                          //displayText = newListTextController.text;
-                          //_isShow = true;
-                          createNewList(newListTextController.text, _user.uid);
-                        });
+                        createNewList(newListTextController.text, _user.uid);
                       },
                       child: const Text('Save List'))),
               const SizedBox(height: 8.0),
@@ -204,55 +234,6 @@ class HomeScreenState extends State<HomeScreen> {
                   letterSpacing: 0.5,
                 ),
               ),
-              const SizedBox(height: 24.0),
-              Text(
-                'You are now signed in using your Google account. To sign out of your account click the "Sign Out" button below.',
-                style: TextStyle(
-                    color: Palette.firebaseGrey.withOpacity(0.8),
-                    fontSize: 14,
-                    letterSpacing: 0.2),
-              ),
-              const SizedBox(height: 16.0),
-              _isSigningOut
-                  ? const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    )
-                  : ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                          Colors.redAccent,
-                        ),
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      onPressed: () async {
-                        setState(() {
-                          _isSigningOut = true;
-                        });
-                        await Authentication.signOut(context: context);
-                        setState(() {
-                          _isSigningOut = false;
-                        });
-                        if (!mounted) return;
-                        Navigator.of(context)
-                            .pushReplacement(_routeToSignInScreen());
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                        child: Text(
-                          'Sign Out',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            letterSpacing: 2,
-                          ),
-                        ),
-                      ),
-                    ),
             ],
           ),
         ),
@@ -281,15 +262,21 @@ class HomeScreenState extends State<HomeScreen> {
       body: {'listName': listName, 'userId': userId},
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
+      print('response code to new list: ${response.statusCode}');
 
-      return jsonDecode(response.body);
+      setState(() {
+        //displayText = newListTextController.text;
+        _isShow = false;
+        _newListCreatedShow = true;
+      });
+      return response;
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
-      throw Exception('Failed to create album.');
+      throw Exception('Failed to create list.');
     }
   }
 }

@@ -144,7 +144,7 @@ class ListScreenState extends State<ListScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.school),
-            label: 'Info',
+            label: 'Sign Out',
           ),
         ],
         currentIndex: _selectedIndex,
@@ -152,28 +152,6 @@ class ListScreenState extends State<ListScreen> {
         onTap: _onItemTapped,
       ),
       body: futureBuilder,
-      /*ListView.separated(
-        itemCount: listOfItems.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            onTap: () {
-              print('Clicked on item #$index'); // Print to console
-              _getLists(_user.uid);
-            },
-            title: Text(listOfItems[index] as String),
-            subtitle: Text('Sample subtitle for item #$index'),
-            leading: Container(
-              height: 50,
-              width: 50,
-              color: Colors.amber,
-            ),
-            trailing: Icon(Icons.edit),
-          );
-        },
-        separatorBuilder: (BuildContext context, int index) {
-          return const Divider();
-        },
-      ),*/
     );
   }
 
@@ -282,8 +260,10 @@ class ListScreenState extends State<ListScreen> {
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-      _futureLists = getLists(_user.uid);
-      setState(() {});
+
+      setState(() {
+        _futureLists = getLists(_user.uid);
+      });
       return response;
     } else {
       // If the server did not return a 200 response,

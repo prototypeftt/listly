@@ -166,10 +166,6 @@ function NewList(call, callback) {
   //Generate UUID for listId
   listId = uuid.v4();
 
-  callback(null, { "listId": listId });
-  console.log("NewList: " + call.request.listName);
-  console.log("user: " + call.request.userId);
-
   database.runTransaction(async (err, transaction) => {
     if (err) {
       console.error(err);
@@ -185,6 +181,10 @@ function NewList(call, callback) {
           p3: call.request.listName,
         },
       });
+
+      callback(null, { "listId": listId });
+      console.log("NewList: " + call.request.listName);
+      console.log("user: " + call.request.userId);
 
       console.log(
         `Successfully inserted ${rowCount} record into the list table.`
