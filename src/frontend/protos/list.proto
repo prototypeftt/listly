@@ -5,10 +5,10 @@ package list;
 service ListService {
     rpc NewList(ListName) returns (ListResponse) {}
     rpc GetLists(ListUser) returns (ListList) {}
-    //rpc DisplayList() returns ();
-    //rpc DeleteList() returns ();
-    //rpc AddToList() returns ();
-    //rpc DeleteFromList() returns ();
+    rpc DisplayList(ListId) returns (ItemList);
+    rpc DeleteList(ListId) returns (deleteSuccess);
+    rpc AddItemToList(Item) returns (ItemId);
+    rpc DeleteItemFromList(ItemId) returns (deleteSuccess);
   }
 
   message ListName {
@@ -31,6 +31,31 @@ service ListService {
 
   message ListList {
     repeated List list = 1;
+  }
+
+  message ListId {
+    string listId = 1;
+  }
+
+  message Item {
+    string listid = 1;
+    string itemname = 2;
+  }
+
+  message ItemList {
+    repeated Item item = 1;
+  }
+
+  message ItemId {
+    string itemid = 1;
+  }
+
+  message deleteSuccess {
+    bool deleted = 1;
+  }
+
+  message itemResponse {
+    string itemId = 1;
   }
 
   message Empty {}

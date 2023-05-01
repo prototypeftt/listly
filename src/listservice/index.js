@@ -20,7 +20,7 @@ const database = instance.database(databaseId);
 
 // Imports the Google Cloud client library
 const {
-  RegistrationServiceClient,LookupServiceClient,
+  RegistrationServiceClient, LookupServiceClient,
 } = require('@google-cloud/service-directory').v1;
 
 // Creates a client
@@ -65,7 +65,6 @@ const list_proto = grpc.loadPackageDefinition(packageDefinition).list;
 
 function RegisterService() {
 
-  
   // Build the namespace name
   const namespaceName = registrationServiceClient.namespacePath(
     projectId,
@@ -96,7 +95,6 @@ function RegisterService() {
 }
 
 function ConfigureEndPoint() {
-  
 
   // Build the service name
   const serviceName = registrationServiceClient.servicePath(
@@ -106,20 +104,18 @@ function ConfigureEndPoint() {
     serviceId
   );
 
+  async function createEndpoint() {
+    const [endpoint] = await registrationServiceClient.createEndpoint({
+      parent: serviceName,
+      endpointId: endpointId,
+      //endpoint: {address: '10.0.0.1', port: 8080},
+    });
 
-    async function createEndpoint() {
-      const [endpoint] = await registrationServiceClient.createEndpoint({
-        parent: serviceName,
-        endpointId: endpointId,
-        //endpoint: {address: '10.0.0.1', port: 8080},
-        annotation: {serviceurl : 'https://listservice-3pziucpdaa-ey.a.run.app'}
-      });
+    console.log(`Created endpoint: ${endpoint.name}`);
+    return endpoint;
+  }
 
-      console.log(`Created endpoint: ${endpoint.name}`);
-      return endpoint;
-    }
-
-    try {
+  try {
     return createEndpoint();
   } catch (err) {
     console.log("error creating service");
@@ -127,9 +123,9 @@ function ConfigureEndPoint() {
 
 }
 
-function GetServiceList(){
-// Creates a client
-const lookupServiceClient = new LookupServiceClient();
+function GetServiceList() {
+  // Creates a client
+  const lookupServiceClient = new LookupServiceClient();
 
   // Build the service name
   const serviceName = registrationServiceClient.servicePath(
@@ -143,7 +139,7 @@ const lookupServiceClient = new LookupServiceClient();
     const [response] = await lookupServiceClient.resolveService({
       name: serviceName,
     });
-  
+
     console.log(`Resolved service: ${response.service.name}`);
     for (const e of response.service.endpoints) {
       console.log(`\n${e.name}`);
@@ -152,7 +148,7 @@ const lookupServiceClient = new LookupServiceClient();
     }
     return response.service;
   }
-  
+
   return resolveService();
 
 }
@@ -205,6 +201,43 @@ function NewList(call, callback) {
 
 }
 
+function DeleteList(call, callback) {
+
+  console.log("request:" + call.request.listId);
+
+  database.runTransaction(async (err, transaction) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    try {
+      console.log("running delete list query");
+
+      const [result] = await transaction.runUpdate({
+        sql: 'DELETE FROM list WHERE listid=$1',
+        params: {
+          p1: call.request.listId,
+        },
+      });
+
+      console.log(
+        `${result} records deleted`
+      );
+      await transaction.commit();
+      const jsonString = JSON.parse(JSON.stringify(result));
+
+      callback(null, { "deleted": jsonString });
+
+    } catch (err) {
+      console.error('ERROR:', err);
+    } finally {
+      // Close the database when finished.
+      //database.close();
+    }
+  });
+
+}
+
 function GetLists(call, callback) {
 
   console.log("request:" + call.request.userId);
@@ -245,7 +278,7 @@ function GetLists(call, callback) {
 function main() {
 
   //RegisterService();
-  
+
   //ConfigureEndPoint();
 
   //GetServiceList();
@@ -254,7 +287,8 @@ function main() {
 
   server.addService(list_proto.ListService.service, {
     NewList: NewList,
-    GetLists: GetLists
+    GetLists: GetLists,
+    DeleteList: DeleteList,
   });
 
   console.log("Server listening on port :" + config.PORT);

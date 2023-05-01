@@ -32,6 +32,7 @@ class Lists {
 }
 
 class ListScreenState extends State<ListScreen> {
+  late Future<List<Lists>> _futureLists;
   late User _user;
   int _selectedIndex = 0;
   final newListTextController = TextEditingController(text: "List Name...");
@@ -82,9 +83,9 @@ class ListScreenState extends State<ListScreen> {
 
   @override
   void initState() {
-    _user = widget._user;
-    //getLists(_user.uid);
     super.initState();
+    _user = widget._user;
+    _futureLists = getLists(_user.uid);
   }
 
   void _onItemTapped(int index) {
@@ -104,7 +105,7 @@ class ListScreenState extends State<ListScreen> {
   @override
   Widget build(BuildContext context) {
     var futureBuilder = FutureBuilder<List<Lists>>(
-      future: getLists(_user.uid),
+      future: _futureLists,
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -184,7 +185,30 @@ class ListScreenState extends State<ListScreen> {
         return Column(
           children: <Widget>[
             ListTile(
+              onTap: () {
+                print('Clicked on list #$index'); // Print to console
+              },
               title: Text(values[index].listname),
+              leading: Icon(Icons.list),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  //IconButton(onPressed: (null) {}, icon: Icon(Icons.favorite)),
+                  IconButton(
+                      onPressed: () {
+                        print('Clicked on edit #$index');
+                      },
+                      icon: const Icon(Icons.edit)),
+                  IconButton(
+                      onPressed: () async {
+                        print(
+                            'Clicked on delete #$index' + values[index].listid);
+                        deleteList(values[index].listid);
+                        // _futureLists = getLists(_user.uid);
+                      },
+                      icon: const Icon(Icons.delete)),
+                ],
+              ),
             ),
             const Divider(
               height: 2.0,
@@ -229,6 +253,42 @@ class ListScreenState extends State<ListScreen> {
       return lists;
     } else {
       throw Exception('Failed to get list.');
+    }
+  }
+
+  Future<http.Response> deleteList(String listId) async {
+    String url = dotenv.env['FRONTEND_URL'].toString();
+
+    final params = {
+      'listId': listId,
+    };
+
+    Uri uri;
+
+    if (kReleaseMode) {
+      print('production mode ${dotenv.env['FRONTEND_URL']}');
+      uri = Uri.https(url, '/deletelist', params);
+    } else {
+      print('development mode ${dotenv.env['FRONTEND_URL']}');
+      uri = Uri.http(url, '/deletelist', params);
+    }
+
+    print('URI delete : $uri');
+
+    final response = await http.get(
+      uri,
+    );
+
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      _futureLists = getLists(_user.uid);
+      setState(() {});
+      return response;
+    } else {
+      // If the server did not return a 200 response,
+      // then throw an exception.
+      throw Exception('Failed to delete list.');
     }
   }
 }
