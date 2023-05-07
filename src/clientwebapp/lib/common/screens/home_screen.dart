@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:clientwebapp/res/custom_colors.dart';
@@ -6,9 +7,9 @@ import 'package:clientwebapp/common/widgets/app_bar_title.dart';
 import 'package:flutter/foundation.dart';
 import 'package:clientwebapp/authentication/google_sign_in/screens/sign_in_screen.dart';
 import 'package:clientwebapp/common/screens/list_screen.dart';
+import 'package:clientwebapp/common/screens/speech_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key, required User user})
@@ -70,11 +71,30 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Route _routeToSpeechScreen() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          SpeechScreen(user: _user),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = const Offset(-1.0, 0.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     _user = widget._user;
-    //newListTextController.addListener((_updateNewListEntry));
   }
 
   void _updateNewListEntry() {
@@ -93,6 +113,9 @@ class HomeScreenState extends State<HomeScreen> {
         Navigator.of(context).pushReplacement(_routeToListScreen());
         break;
       case 2:
+        Navigator.of(context).pushReplacement(_routeToSpeechScreen());
+        break;
+      case 3:
         print('signing out');
         setState(() {
           _isSigningOut = true;
@@ -133,7 +156,11 @@ class HomeScreenState extends State<HomeScreen> {
             label: 'Lists',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school),
+            icon: Icon(Icons.mic),
+            label: 'Speech',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.logout),
             label: 'Sign Out',
           )
         ],
@@ -263,7 +290,7 @@ class HomeScreenState extends State<HomeScreen> {
     );
 
     if (response.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
+      // If the server did return a 200 CREATED response,
       // then parse the JSON.
       print('response code to new list: ${response.statusCode}');
 
@@ -274,7 +301,7 @@ class HomeScreenState extends State<HomeScreen> {
       });
       return response;
     } else {
-      // If the server did not return a 201 CREATED response,
+      // If the server did not return a 200 CREATED response,
       // then throw an exception.
       throw Exception('Failed to create list.');
     }

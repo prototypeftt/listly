@@ -1,0 +1,25 @@
+{
+  "name": "voice2txt",
+  "version": "1.0.0",
+  "description": "Convert 16 bit audio to text using Google Speech to Text",
+  "main": "index.js",
+  "scripts": {
+    "start": "export NODE_ENV=production&& node index.js",
+    "start:dev": "export NODE_ENV=development&& nodemon index.js --legacy-watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/speech": "^5.4.1",
+    "chalk": "^4.1.2",
+    "node-record-lpcm16": "^1.0.1",
+    "nodemon": "^2.0.22"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}

@@ -1,3 +1,4 @@
+import 'package:clientwebapp/authentication/google_sign_in/utils/authentication.dart';
 import 'package:clientwebapp/common/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -39,6 +40,7 @@ class ListScreenState extends State<ListScreen> {
   List listOfItems = List.generate(20, (index) => 'Sample List - $index');
   //late List listOfItems;
   List<Lists> listOfLists = [];
+  bool _isSigningOut = false;
 
   Route _routeToSignInScreen() {
     return PageRouteBuilder(
@@ -81,6 +83,26 @@ class ListScreenState extends State<ListScreen> {
     );
   }
 
+  Route _routeToListScreen() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          ListScreen(user: _user),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = const Offset(-1.0, 0.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -88,13 +110,25 @@ class ListScreenState extends State<ListScreen> {
     _futureLists = getLists(_user.uid);
   }
 
-  void _onItemTapped(int index) {
+  Future<void> _onItemTapped(int index) async {
     switch (index) {
       case 0:
         Navigator.of(context).pushReplacement(_routeToHomeScreen());
         break;
       case 1:
+        //Navigator.of(context).pushReplacement(_routeToListScreen());
         break;
+      case 2:
+        print('signing out');
+        setState(() {
+          _isSigningOut = true;
+        });
+        await Authentication.signOut(context: context);
+        setState(() {
+          _isSigningOut = false;
+        });
+        if (!mounted) return;
+        Navigator.of(context).pushReplacement(_routeToSignInScreen());
     }
 
     setState(() {
@@ -177,6 +211,11 @@ class ListScreenState extends State<ListScreen> {
                         print('Clicked on edit #$index');
                       },
                       icon: const Icon(Icons.edit)),
+                  IconButton(
+                      onPressed: () {
+                        print('Clicked on share #$index');
+                      },
+                      icon: const Icon(Icons.share)),
                   IconButton(
                       onPressed: () async {
                         print(
