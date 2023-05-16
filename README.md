@@ -10,3 +10,6 @@ Listly - Shopping Lists
 
 # Architecture
 
+![image](https://github.com/prototypeftt/listly/assets/114310624/1048e554-24c3-4860-977e-b378197deda2)
+
+
